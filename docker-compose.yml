@@ -1,0 +1,41 @@
+services:
+  api_gateway:
+    build: ./api_gateway
+    env_file:
+      - .env.development
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - GATEWAY_PORT=${GATEWAY_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - USERS_URL=${USERS_URL}
+      - ORDERS_URL=${ORDERS_URL}
+    ports:
+      - "8080:8080"   # стабильный порт на хосте
+    depends_on:
+      - service_users
+      - service_orders
+    networks: [appnet]
+
+  service_users:
+    build: ./service_users
+    env_file:
+      - .env.development
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - USERS_PORT=${USERS_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+    networks: [appnet]
+
+  service_orders:
+    build: ./service_orders
+    env_file:
+      - .env.development
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - ORDERS_PORT=${ORDERS_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+    networks: [appnet]
+
+networks:
+  appnet:
+    driver: bridge
